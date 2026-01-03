@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>تشخیص بالینی تومور پستان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --primary: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --neutral: #6b7280;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* ===== Header جدید — ساده و بدون تداخل ===== */
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            /* در فارسی: چپ‌چین | در انگلیسی: راست‌چین */
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        [dir="ltr"] .btn-group {
+            justify-content: flex-end;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary);
+            text-align: center;
+            width: 100%;
+        }
+
+        .lang-toggle-btn,
+        .help-btn {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .help-btn {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--neutral);
+        }
+
+        .lang-toggle-btn:hover {
+            background: rgba(79, 70, 229, 0.2);
+        }
+
+        .help-btn:hover {
+            background: rgba(107, 114, 128, 0.2);
+            color: #4b5563;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text);
+            min-width: 140px;
+        }
+
+        input {
+            width: 100%;
+            max-width: 160px;
+            padding: 10px 14px;
+            font-size: 1.05rem;
+            text-align: center;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .btn {
+            display: block;
+            margin: 20px auto 0;
+            width: fit-content;
+            padding: 10px 24px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary), #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+        }
+
+        .result-area {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        .prediction-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            padding: 14px 32px;
+            border-radius: 14px;
+            min-width: 200px;
+            margin: 10px 0;
+        }
+
+        .prediction-1 {
+            background: rgba(16, 185, 128, 0.1);
+            color: #059669;
+            border: 2px solid #10b981;
+        }
+
+        .prediction-0 {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 2px solid #ef4444;
+        }
+
+        .prediction-uncertain {
+            background: rgba(107, 114, 128, 0.1);
+            color: #4b5563;
+            border: 2px dashed #6b7280;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            position: relative;
+            height: 50px;
+            background: rgba(243, 244, 246, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .chart-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #10b981, #4f46e5);
+            transition: width 0.8s ease-out;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .chart-label {
+            position: absolute;
+            top: 50%;
+            inset-inline-start: 10px;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .chart-value {
+            position: absolute;
+            top: 50%;
+            inset-inline-end: 10px;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            padding: 10px;
+        }
+
+        /* Glossary Section */
+        #glossarySection {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        #glossarySection h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .glossary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .glossary-table th, .glossary-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .glossary-table th {
+            background: rgba(79, 70, 229, 0.05);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* 📱 موبایل */
+        @media (max-width: 500px) {
+            .btn-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            [dir="ltr"] .btn-group {
+                align-items: flex-end;
+            }
+            h1 { font-size: 1.6rem; }
+            .prediction-badge { font-size: 1.6rem; }
+            .btn { width: 90%; margin: 20px auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="btn-group">
+                <button class="lang-toggle-btn" id="langToggleBtn">فارسی / English</button>
+                <button class="help-btn" id="helpBtn">راهنمای فیچرها (فارسی)</button>
+            </div>
+            <h1 id="pageTitle">تشخیص بالینی تومور پستان</h1>
+        </header>
+
+        <div class="form-container">
+            <div class="input-row">
+                <div class="input-group">
+                    <label id="label_mean_texture">بافت میانگین (Mean Texture)</label>
+                    <input type="text" id="mean_texture" placeholder="18.5">
+                </div>
+                <div class="input-group">
+                    <label id="label_mean_perimeter">محیط میانگین (Mean Perimeter)</label>
+                    <input type="text" id="mean_perimeter" placeholder="105.0">
+                </div>
+                <div class="input-group">
+                    <label id="label_area_error">خطای استاندارد مساحت (Area Error)</label>
+                    <input type="text" id="area_error" placeholder="35.2">
+                </div>
+                <div class="input-group">
+                    <label id="label_worst_perimeter">بیشینهٔ محیط (Worst Perimeter)</label>
+                    <input type="text" id="worst_perimeter" placeholder="120.3">
+                </div>
+                <div class="input-group">
+                    <label id="label_worst_smoothness">بیشینهٔ ناهمواری (Worst Smoothness)</label>
+                    <input type="text" id="worst_smoothness" placeholder="0.15">
+                </div>
+                <div class="input-group">
+                    <label id="label_worst_concave_points">بیشینهٔ نقاط فرورفته (Worst Concave Points)</label>
+                    <input type="text" id="worst_concave_points" placeholder="0.18">
+                </div>
+            </div>
+
+            <button class="btn" id="predictBtn">تحلیل و تشخیص</button>
+        </div>
+
+        <div class="result-area">
+            <div class="prediction-badge" id="prediction">در انتظار...</div>
+            <div class="chart-container">
+                <div class="chart-bar" id="chartBar"></div>
+                <div class="chart-label" id="chartLabel">احتمال بدخیمی:</div>
+                <div class="chart-value" id="chartValue">—%</div>
+            </div>
+        </div>
+
+        <!-- راهنمای فیچرها -->
+        <div id="glossarySection">
+            <h2 id="glossaryTitle">راهنمای فیچرهای بالینی</h2>
+            <table class="glossary-table" id="glossaryTable">
+                <thead>
+                    <tr>
+                        <th id="glossaryHeader1">فیچر</th>
+                        <th id="glossaryHeader2">توضیح</th>
+                    </tr>
+                </thead>
+                <tbody id="glossaryBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer id="footerText">
+        مدل قابل تفسیر — طراحی شده توسط فاطمه بابائی
+    </footer>
+
+    <script>
+        const translations = {
+            fa: {
+                pageTitle: "تشخیص بالینی تومور پستان",
+                langToggleBtn: "فارسی / English",
+                helpBtn_open: "راهنمای فیچرها",
+                helpBtn_close: "بستن راهنما",
+                predictBtn: "تحلیل و تشخیص",
+                prediction_pending: "در انتظار...",
+                prediction_benign: "خوش‌خیم (Benign)",
+                prediction_malignant: "بدخیم (Malignant)",
+                prediction_uncertain: "تشخیص نامشخص",
+                prediction_error: "خطا در ورودی",
+                chartLabel: "احتمال بدخیمی:",
+                footer: "مدل قابل تفسیر — طراحی شده توسط فاطمه بابائی",
+                glossaryTitle: "راهنمای فیچرهای بالینی",
+                glossaryHeader1: "فیچر",
+                glossaryHeader2: "توضیح",
+                label_mean_texture: "بافت میانگین ",
+                label_mean_perimeter: "محیط میانگین ",
+                label_area_error: "خطای استاندارد مساحت ",
+                label_worst_perimeter: "بیشینهٔ محیط ",
+                label_worst_smoothness: "بیشینهٔ ناهمواری ",
+                label_worst_concave_points: "بیشینهٔ نقاط فرورفته ",
+                placeholder_mean_texture: "18.5",
+                placeholder_mean_perimeter: "105.0",
+                placeholder_area_error: "35.2",
+                placeholder_worst_perimeter: "120.3",
+                placeholder_worst_smoothness: "0.15",
+                placeholder_worst_concave_points: "0.18",
+                error_mean_texture: "«بافت میانگین» را وارد نکرده‌اید.",
+                error_mean_perimeter: "«محیط میانگین» را وارد نکرده‌اید.",
+                error_area_error: "«خطای استاندارد مساحت» را وارد نکرده‌اید.",
+                error_worst_perimeter: "«بیشینهٔ محیط» را وارد نکرده‌اید.",
+                error_worst_smoothness: "«بیشینهٔ ناهمواری» را وارد نکرده‌اید.",
+                error_worst_concave_points: "«بیشینهٔ نقاط فرورفته» را وارد نکرده‌اید.",
+                error_not_number_mean_texture: "«بافت میانگین» باید عدد باشد.",
+                error_not_number_mean_perimeter: "«محیط میانگین» باید عدد باشد.",
+                error_not_number_area_error: "«خطای استاندارد مساحت» باید عدد باشد.",
+                error_not_number_worst_perimeter: "«بیشینهٔ محیط» باید عدد باشد.",
+                error_not_number_worst_smoothness: "«بیشینهٔ ناهمواری» باید عدد باشد.",
+                error_not_number_worst_concave_points: "«بیشینهٔ نقاط فرورفته» باید عدد باشد.",
+                glossary: [
+                    ["بافت میانگین (Mean Texture)", "میانگین ناهمواری سطح هستهٔ سلول — افزایش آن نشانهٔ ساختار سطحی نامنظم و دانه‌بندی غیرطبیعی است که در سلول‌های بدخیم رایج است."],
+                    ["محیط میانگین (Mean Perimeter)", "میانگین طول مرز هسته — گسترش محیط، نشان‌دهندهٔ چندشکلی هسته‌ای (pleomorphism) و رفتار تهاجمی تومور است."],
+                    ["خطای استاندارد مساحت (Area Error)", "نوسان در اندازه‌گیری مساحت هسته‌ها — افزایش آن با ناپایداری مورفولوژیک سلول‌های تومورال همراه است."],
+                    ["بیشینهٔ محیط (Worst Perimeter)", "بزرگ‌ترین محیط مشاهده‌شده در نمونه — معیاری از حداکثر ناهنجاری شکلی (maximal nuclear atypia)."],
+                    ["بیشینهٔ ناهمواری (Worst Smoothness)", "بیشترین میزان ناصافی سطح هسته — هرچه بیشتر باشد، خطر بدخیمی بالاتر است. *(توجه: «همواری» در اینجا معکوس است — smoothness کم = ناهمواری زیاد)*"],
+                    ["بیشینهٔ نقاط فرورفته (Worst Concave Points)", "بیشترین تعداد فرورفتگی‌های عمقی در مرز هسته — یکی از قوی‌ترین شاخص‌های پیش‌بینی سرطان پستان در سیستم‌های هوش مصنوعی قابل تفسیر."]
+                ]
+            },
+            en: {
+                pageTitle: "Clinical Breast Tumor Diagnosis",
+                langToggleBtn: "English / فارسی",
+                helpBtn_open: "Feature Guide",
+                helpBtn_close: "Close Guide",
+                predictBtn: "Analyze & Diagnose",
+                prediction_pending: "Awaiting...",
+                prediction_benign: "Benign",
+                prediction_malignant: "Malignant",
+                prediction_uncertain: "Uncertain Diagnosis",
+                prediction_error: "Input Error",
+                chartLabel: "Malignancy Probability:",
+                footer: "Interpretable Model — Designed by Fatemeh Babaei",
+                glossaryTitle: "Clinical Feature Guide",
+                glossaryHeader1: "Feature",
+                glossaryHeader2: "Explanation",
+                label_mean_texture: "Mean Texture",
+                label_mean_perimeter: "Mean Perimeter",
+                label_area_error: "Area Error",
+                label_worst_perimeter: "Worst Perimeter",
+                label_worst_smoothness: "Worst Smoothness",
+                label_worst_concave_points: "Worst Concave Points",
+                placeholder_mean_texture: "18.5",
+                placeholder_mean_perimeter: "105.0",
+                placeholder_area_error: "35.2",
+                placeholder_worst_perimeter: "120.3",
+                placeholder_worst_smoothness: "0.15",
+                placeholder_worst_concave_points: "0.18",
+                error_mean_texture: "Mean Texture is required.",
+                error_mean_perimeter: "Mean Perimeter is required.",
+                error_area_error: "Area Error is required.",
+                error_worst_perimeter: "Worst Perimeter is required.",
+                error_worst_smoothness: "Worst Smoothness is required.",
+                error_worst_concave_points: "Worst Concave Points is required.",
+                error_not_number_mean_texture: "Mean Texture must be a number.",
+                error_not_number_mean_perimeter: "Mean Perimeter must be a number.",
+                error_not_number_area_error: "Area Error must be a number.",
+                error_not_number_worst_perimeter: "Worst Perimeter must be a number.",
+                error_not_number_worst_smoothness: "Worst Smoothness must be a number.",
+                error_not_number_worst_concave_points: "Worst Concave Points must be a number.",
+                glossary: [
+                    ["Mean Texture", "Average variation in nuclear gray-scale intensity — higher values indicate irregular surface texture, common in malignant cells."],
+                    ["Mean Perimeter", "Average boundary length of cell nuclei — increased size often correlates with aggressive tumor growth."],
+                    ["Area Error", "Standard error of nuclear area measurement — higher values reflect morphological instability in tumor cells."],
+                    ["Worst Perimeter", "Largest perimeter value among all nuclei — indicator of maximal nuclear atypia."],
+                    ["Worst Smoothness", "Maximum local variation in nuclear contour — higher values mean rougher surface and higher malignancy risk."],
+                    ["Worst Concave Points", "Maximum number of deep concave indentations in nuclear boundary — one of the strongest predictors of malignancy."]
+                ]
+            }
+        };
+
+        let currentLang = 'fa';
+        const htmlRoot = document.getElementById('htmlRoot');
+        const langToggleBtn = document.getElementById('langToggleBtn');
+        const helpBtn = document.getElementById('helpBtn');
+        const glossarySection = document.getElementById('glossarySection');
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            htmlRoot.setAttribute('lang', lang);
+            htmlRoot.setAttribute('dir', lang);
+
+            // به‌روزرسانی متن‌ها
+            document.getElementById('pageTitle').textContent = t.pageTitle;
+            langToggleBtn.textContent = t.langToggleBtn;
+            helpBtn.textContent = glossarySection.style.display === 'none' ? t.helpBtn_open : t.helpBtn_close;
+            document.getElementById('predictBtn').textContent = t.predictBtn;
+            document.getElementById('prediction').textContent = t.prediction_pending;
+            document.getElementById('chartLabel').textContent = t.chartLabel;
+            document.getElementById('footerText').textContent = t.footer;
+
+            // لیبل‌ها
+            document.getElementById('label_mean_texture').textContent = t.label_mean_texture;
+            document.getElementById('label_mean_perimeter').textContent = t.label_mean_perimeter;
+            document.getElementById('label_area_error').textContent = t.label_area_error;
+            document.getElementById('label_worst_perimeter').textContent = t.label_worst_perimeter;
+            document.getElementById('label_worst_smoothness').textContent = t.label_worst_smoothness;
+            document.getElementById('label_worst_concave_points').textContent = t.label_worst_concave_points;
+
+            // placeholder
+            document.getElementById('mean_texture').placeholder = t.placeholder_mean_texture;
+            document.getElementById('mean_perimeter').placeholder = t.placeholder_mean_perimeter;
+            document.getElementById('area_error').placeholder = t.placeholder_area_error;
+            document.getElementById('worst_perimeter').placeholder = t.placeholder_worst_perimeter;
+            document.getElementById('worst_smoothness').placeholder = t.placeholder_worst_smoothness;
+            document.getElementById('worst_concave_points').placeholder = t.placeholder_worst_concave_points;
+
+            // جهت‌دهی کلی
+            document.body.style.textAlign = lang === 'fa' ? 'right' : 'left';
+            document.body.style.direction = lang;
+
+            // به‌روزرسانی راهنما اگر باز است
+            if (glossarySection.style.display !== 'none') {
+                updateGlossary();
+            }
+        }
+
+        function updateGlossary() {
+            const t = translations[currentLang];
+            document.getElementById('glossaryTitle').textContent = t.glossaryTitle;
+            document.getElementById('glossaryHeader1').textContent = t.glossaryHeader1;
+            document.getElementById('glossaryHeader2').textContent = t.glossaryHeader2;
+
+            let rows = '';
+            t.glossary.forEach(([feature, desc]) => {
+                rows += `<tr><td>${feature}</td><td>${desc}</td></tr>`;
+            });
+            document.getElementById('glossaryBody').innerHTML = rows;
+
+            // تنظیم جهت جدول
+            const table = document.getElementById('glossaryTable');
+            table.setAttribute('dir', currentLang);
+            const cells = table.querySelectorAll('th, td');
+            cells.forEach(cell => {
+                cell.style.textAlign = currentLang === 'fa' ? 'right' : 'left';
+            });
+        }
+
+        langToggleBtn.addEventListener('click', () => {
+            setLanguage(currentLang === 'fa' ? 'en' : 'fa');
+        });
+
+        helpBtn.addEventListener('click', () => {
+            const t = translations[currentLang];
+            if (glossarySection.style.display === 'none' || !glossarySection.style.display) {
+                glossarySection.style.display = 'block';
+                helpBtn.textContent = t.helpBtn_close;
+                updateGlossary();
+            } else {
+                glossarySection.style.display = 'none';
+                helpBtn.textContent = t.helpBtn_open;
+            }
+        });
+
+        // شروع
+        setLanguage('fa');
+
+        // Prediction logic
+        function parseInput(id, key) {
+            const el = document.getElementById(id);
+            const valStr = el.value.trim();
+            if (valStr === '') throw new Error(translations[currentLang][`error_${key}`]);
+            const num = parseFloat(valStr);
+            if (isNaN(num)) throw new Error(translations[currentLang][`error_not_number_${key}`]);
+            return num;
+        }
+
+        function predict() {
+            try {
+                const v = {
+                    mean_texture: parseInput('mean_texture', 'mean_texture'),
+                    mean_perimeter: parseInput('mean_perimeter', 'mean_perimeter'),
+                    area_error: parseInput('area_error', 'area_error'),
+                    worst_perimeter: parseInput('worst_perimeter', 'worst_perimeter'),
+                    worst_smoothness: parseInput('worst_smoothness', 'worst_smoothness'),
+                    worst_concave_points: parseInput('worst_concave_points', 'worst_concave_points')
+                };
+
+                const predEl = document.getElementById('prediction');
+                const chartBar = document.getElementById('chartBar');
+                const chartValue = document.getElementById('chartValue');
+                const t = translations[currentLang];
+
+                chartBar.style.width = '0%';
+                chartValue.textContent = '—%';
+
+                // Benign
+                if (v.worst_perimeter <= 101.700 && v.worst_concave_points <= 0.142) {
+                    predEl.textContent = t.prediction_benign;
+                    predEl.className = 'prediction-badge prediction-1';
+                    chartBar.style.width = '15%';
+                    chartValue.textContent = '15%';
+                    return;
+                }
+                if (v.mean_perimeter <= 98.730 && v.worst_smoothness <= 0.136) {
+                    predEl.textContent = t.prediction_benign;
+                    predEl.className = 'prediction-badge prediction-1';
+                    chartBar.style.width = '20%';
+                    chartValue.textContent = '20%';
+                    return;
+                }
+                if (v.mean_texture <= 16.170 && v.worst_concave_points <= 0.142) {
+                    predEl.textContent = t.prediction_benign;
+                    predEl.className = 'prediction-badge prediction-1';
+                    chartBar.style.width = '10%';
+                    chartValue.textContent = '10%';
+                    return;
+                }
+                if (v.mean_texture <= 20.520 && v.area_error <= 24.870) {
+                    predEl.textContent = t.prediction_benign;
+                    predEl.className = 'prediction-badge prediction-1';
+                    chartBar.style.width = '25%';
+                    chartValue.textContent = '25%';
+                    return;
+                }
+
+                // Malignant
+                if (v.mean_texture > 20.520 && v.worst_concave_points > 0.142) {
+                    predEl.textContent = t.prediction_malignant;
+                    predEl.className = 'prediction-badge prediction-0';
+                    chartBar.style.width = '85%';
+                    chartValue.textContent = '85%';
+                    return;
+                }
+                if (v.area_error > 24.870 && v.worst_concave_points > 0.142) {
+                    predEl.textContent = t.prediction_malignant;
+                    predEl.className = 'prediction-badge prediction-0';
+                    chartBar.style.width = '90%';
+                    chartValue.textContent = '90%';
+                    return;
+                }
+                if (v.mean_texture > 16.170 && v.mean_perimeter > 98.730) {
+                    predEl.textContent = t.prediction_malignant;
+                    predEl.className = 'prediction-badge prediction-0';
+                    chartBar.style.width = '75%';
+                    chartValue.textContent = '75%';
+                    return;
+                }
+                if (v.worst_perimeter > 101.700 && v.worst_smoothness > 0.136) {
+                    predEl.textContent = t.prediction_malignant;
+                    predEl.className = 'prediction-badge prediction-0';
+                    chartBar.style.width = '95%';
+                    chartValue.textContent = '95%';
+                    return;
+                }
+
+                predEl.textContent = t.prediction_uncertain;
+                predEl.className = 'prediction-badge prediction-uncertain';
+                chartBar.style.width = '50%';
+                chartValue.textContent = '50%';
+
+            } catch (err) {
+                const t = translations[currentLang];
+                document.getElementById('prediction').textContent = t.prediction_error;
+                document.getElementById('prediction').className = 'prediction-badge prediction-uncertain';
+                document.getElementById('chartBar').style.width = '0%';
+                document.getElementById('chartValue').textContent = '—%';
+            }
+        }
+
+        document.getElementById('predictBtn').addEventListener('click', predict);
+        document.addEventListener('keypress', e => { if (e.key === 'Enter') predict(); });
+    </script>
+</body>
+</html>
