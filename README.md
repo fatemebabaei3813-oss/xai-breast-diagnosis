@@ -63,3 +63,4 @@
 [GitHub](https://github.com/fatemebabaei3813-oss) • [LinkedIn](www.linkedin.com/in/fatemeh-babaei05)
 
 > 🌷 مدل قابل تفسیر — برای آینده‌ای شفاف‌تر در هوش مصنوعی پزشکی
+> با تشکر از دوستانم برای کمک به اینده.
